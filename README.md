@@ -3,3 +3,5 @@
 <h3 align=center> <a href="Lab1">Лабораторная работа 1</a> </h3>
 
 <h3 align=center> <a href="Lab2">Лабораторная работа 2</a> </h3>
+
+<h3 align=center> <a href="Lab3">Лабораторная работа 3</a> </h3>
