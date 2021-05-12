@@ -19,7 +19,7 @@ module cbrt (
 
 	reg [7 : 0] a;
 
-	reg [2 : 0] r, m;
+	reg [3 : 0] r, m;
 	reg [7 : 0] t;
 
 	reg [2 : 0] state;
@@ -63,19 +63,19 @@ module cbrt (
         if (rst_i) begin
             a <= a_bi;
             t <= 0;
-            r <= 4;
-            m <= 4;
+            r <= 3;
+            m <= 3;
             y_bo <= 0;
             mult2_reset <= 0;
         end else begin
 	        case (state)
 	            IDLE:
 	                begin
-                        y_bo <= r;
+                       y_bo <= r[2:0];
 	                end
 	            STATE1:
 	                begin
-	                   y_bo <= r;
+	                   y_bo <= r[2:0];
 	                   if (|m) begin
 	                       mult2_reset <= 1;
 	                       mult2_i1 <= r;
@@ -88,7 +88,7 @@ module cbrt (
 	                        mult2_reset <= 0;
 	                    end else begin
 	                        mult2_reset <= 1;
-	                        mult2_i1 <= mult2_out;
+	                        mult2_i1 <= mult2_out[7:0];
 	                        mult2_i2 <= r;
 	                    end
 	                end
@@ -96,19 +96,23 @@ module cbrt (
 	                begin
 	                    mult2_reset <= 0;
 	                    if (!mult2_busy) begin
-	                        if (a == mult2_out) begin
-	                            m <= 0;
-	                        end else if (a <= mult2_out) begin
+	                        if (a == mult2_out[7:0]) begin
+	                            m = 0;
+	                        end else if (a < mult2_out[7:0]) begin
 	                            r = r - m;
 	                        end else begin
 	                            r = r + m;
+	                        end
+	                        
+	                        if (r > 6) begin 
+	                           r = 6;
 	                        end
 	                    end
 	                end
 	            STATE4:
 	                begin
-	                    if (m >= 1) begin
-	                        m <= m >> 1;
+	                    if (m > 0) begin
+	                        m = m - 1;
 	                    end
 	                 end
 	        endcase

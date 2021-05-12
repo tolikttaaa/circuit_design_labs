@@ -5,7 +5,6 @@ module accelerator(
 	input clk_i,
 	input [7 : 0] a_in,
 	input [7 : 0] b_in,
-	output busy_out,
 	output reg [15 : 0] y_out
 );
 
@@ -41,9 +40,7 @@ module accelerator(
     	.busy_o(mult1_busy),
     	.y_bo(mult1_out)
     );
-
-    assign busy_out = rst_i | (state != 0);
-
+       
     always @(posedge clk_i) 
         if (rst_i) begin
             state <= WORK1;
