@@ -1,0 +1,54 @@
+* C:\ITMO\circuit_design_labs\Lab4\code\test.asc
+XX1 VDD OUT1 OUT2 OUT3 OUT4 M1 M2 IN demultiplexer
+V1 M1 0 PULSE(0 3 1n 10p 10p 8n 16n)
+V2 M2 0 PULSE(0 3 1n 10p 10p 4n 8n)
+V3 IN 0 PULSE(0 3 1n 10p 10p 2n 4n)
+VDD VDD 0 3
+R1 OUT1 0 100k
+C1 OUT1 0 100f
+C2 OUT2 0 100f
+C3 OUT3 0 100f
+C4 OUT4 0 100f
+R2 OUT2 0 100k
+R3 OUT3 0 100k
+R4 OUT4 0 100k
+XX2 VDD IN NOT not
+XX3 M1 M2 IN VDD AND and3
+R5 NOT 0 100k
+C5 NC_01 0 100f
+R6 AND 0 100k
+C6 AND 0 100f
+
+* block symbol definitions
+.subckt demultiplexer VDD OUT1 OUT2 OUT3 OUT4 M1 M2 IN
+XX1 M1 M2 IN VDD OUT1 and3
+XX2 N001 M2 IN VDD OUT2 and3
+XX3 M1 N002 IN VDD OUT3 and3
+XX4 N001 N002 IN VDD OUT4 and3
+XX5 VDD M1 N001 not
+XX6 VDD M2 N002 not
+.ends demultiplexer
+
+.subckt not VDD VIN VOUT
+M1 VOUT VIN 0 N002 NMOS l=90n w=200n
+M2 VOUT VIN VDD N001 PMOS l=90n w=400n
+.ends not
+
+.subckt and3 VIN1 VIN2 VIN3 VDD VOUT
+M2 N001 VIN1 N006 N004 NMOS l=90n w=200n
+M3 N006 VIN2 N009 N008 NMOS l=90n w=200n
+M4 N009 VIN3 0 N011 NMOS l=90n w=200n
+M1 VOUT N001 VDD N002 PMOS l=90n w=400n
+M5 N001 VIN1 VDD N003 PMOS l=90n w=400n
+M6 N001 VIN2 VDD N007 PMOS l=90n w=400n
+M7 N001 VIN3 VDD N010 PMOS l=90n w=400n
+M8 VOUT N001 0 N005 NMOS l=90n w=200n
+.ends and3
+
+.model NMOS NMOS
+.model PMOS PMOS
+.lib C:\Users\user\Documents\LTspiceXVII\lib\cmp\standard.mos
+.include 90nm_bulk.txt
+.tran 0 33n 0 1p
+.backanno
+.end
